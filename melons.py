@@ -1,9 +1,5 @@
 """This file should have our order classes in it."""
-
-BASE_PRICE = 5
-SPECIAL_MELON_PRICES = {
-    "christmas" : 1.5 * BASE_PRICE,
-}
+import random
 
 class AbstractMelonOrder(object):
     """ Abstract class for melon orders."""
@@ -13,7 +9,8 @@ class AbstractMelonOrder(object):
         self.species = species
         self.qty = qty
         self.shipped = False
-        self.melon_price = SPECIAL_MELON_PRICES.get(species.lower(), BASE_PRICE)
+        self.base_price = random.randint(5, 9)
+        self.melon_price = self.get_melon_price()
 
     def get_total(self):
         """Calculate price."""
@@ -34,6 +31,15 @@ class AbstractMelonOrder(object):
     def get_shipping_cost(self):
         """Returns shipping cost for an order."""
         return 0
+
+    def get_melon_price(self):
+        """Get melon price, taking into account individual price multipliers."""
+        special_melon_multipliers = {
+            "christmas" : 1.5,
+        }
+
+        mult = special_melon_multipliers.get(self.species.lower(), 1)
+        return mult * self.base_price
 
 
 class DomesticMelonOrder(AbstractMelonOrder):
