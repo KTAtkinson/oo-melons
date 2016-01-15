@@ -1,49 +1,18 @@
 """This file should have our order classes in it."""
-
-
-class DomesticMelonOrder(object):
-    """A domestic (in the US) melon order."""
+class AbstractMelonOrder(object):
+    """ Abstract class for melon orders."""
 
     def __init__(self, species, qty):
-        """Initialize melon order attributes"""
-
+        """Initialize unshipped melon order with melon type and number."""
         self.species = species
         self.qty = qty
         self.shipped = False
-        self.order_type = "domestic"
-        self.tax = 0.08
 
     def get_total(self):
         """Calculate price."""
 
         base_price = 5
-        total = (1 + self.tax) * self.qty * base_price
-        return total
-
-    def mark_shipped(self):
-        """Set shipped to true."""
-
-        self.shipped = True
-
-
-class InternationalMelonOrder(object):
-    """An international (non-US) melon order."""
-
-    def __init__(self, species, qty, country_code):
-        """Initialize melon order attributes"""
-
-        self.species = species
-        self.qty = qty
-        self.country_code = country_code
-        self.shipped = False
-        self.order_type = "international"
-        self.tax = 0.17
-
-    def get_total(self):
-        """Calculate price."""
-
-        base_price = 5
-        total = (1 + self.tax) * self.qty * base_price
+        total = (1 + self.tax_rate) * self.qty * base_price
         return total
 
     def mark_shipped(self):
@@ -53,5 +22,22 @@ class InternationalMelonOrder(object):
 
     def get_country_code(self):
         """Return the country code."""
-
         return self.country_code
+
+
+class DomesticMelonOrder(AbstractMelonOrder):
+    """Class representing a domestic melon order."""
+    order_type = "domestic"
+    tax_rate = 0.08
+    country_code = 'USA'
+
+
+class InternationalMelonOrder(AbstractMelonOrder):
+    """Class representing a international melon order."""
+    order_type = "international"
+    tax_rate = 0.17
+
+    def __init__(self, species, qty, country_code):
+        """Initialize international unshipped order with melon type, number, country code."""
+        super(InternationalMelonOrder, self).__init__(species, qty)
+        self.country_code = country_code
