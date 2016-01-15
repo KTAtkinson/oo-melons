@@ -1,4 +1,10 @@
 """This file should have our order classes in it."""
+
+BASE_PRICE = 5
+SPECIAL_MELON_PRICES = {
+    "christmas" : 1.5 * BASE_PRICE,
+}
+
 class AbstractMelonOrder(object):
     """ Abstract class for melon orders."""
 
@@ -7,12 +13,13 @@ class AbstractMelonOrder(object):
         self.species = species
         self.qty = qty
         self.shipped = False
+        self.melon_price = SPECIAL_MELON_PRICES.get(species.lower(), BASE_PRICE)
 
     def get_total(self):
         """Calculate price."""
 
-        base_price = 5
-        total = (1 + self.tax_rate) * self.qty * base_price
+        total = (1 + self.tax_rate) * self.qty * self.melon_price
+        total += self.get_shipping_cost()
         return total
 
     def mark_shipped(self):
@@ -23,6 +30,10 @@ class AbstractMelonOrder(object):
     def get_country_code(self):
         """Return the country code."""
         return self.country_code
+
+    def get_shipping_cost(self):
+        """Returns shipping cost for an order."""
+        return 0
 
 
 class DomesticMelonOrder(AbstractMelonOrder):
@@ -41,3 +52,10 @@ class InternationalMelonOrder(AbstractMelonOrder):
         """Initialize international unshipped order with melon type, number, country code."""
         super(InternationalMelonOrder, self).__init__(species, qty)
         self.country_code = country_code
+
+    def get_shipping_cost(self):
+        """Returns international shipping cost for an order."""
+        if self.qty < 10:
+            return 3
+
+        return 0
